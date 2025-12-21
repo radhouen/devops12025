@@ -1,0 +1,1 @@
+docker run --name omar-nginx -v /Users/abd/Documents/devops12025/docker:/usr/share/nginx/html -p 8081:80 -d nginx 
