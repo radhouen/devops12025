@@ -13,10 +13,16 @@ import { AuthService } from '../../core/services/auth.service';
   template: `
     <mat-toolbar color="primary">
       <span routerLink="/" style="cursor: pointer;">
-        <mat-icon>store</mat-icon>
-        Store Management
+        <mat-icon>directioncar</mat-icon>
+        Karhabtii
       </span>
       <span class="spacer"></span>
+      <button mat-button routerLink="/products">
+      Piece Auto
+      </button>
+      <button mat-button routerLink="/products">
+      Accessoires
+      </button>
       <button mat-button routerLink="/products">
         <mat-icon>inventory</mat-icon>
         Products
@@ -52,6 +58,10 @@ import { AuthService } from '../../core/services/auth.service';
     mat-icon {
       margin-right: 5px;
     }
+    .mat-toolbar.mat-primary {
+      --mat-toolbar-container-background-color: #ff0808d9;
+      --mat-toolbar-container-text-color: white;
+  }
   `]
 })
 export class NavbarComponent {

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2026-01-03T10:25:59Z"
+  name: web-app-config
+  namespace: demo
+  resourceVersion: "45860481"
+  uid: 03a25aa5-7f71-4cde-9d9b-3caaa829add3
+data:
+  api-url: www.google.com
+  token: poilkujyhfhsts5643719
+  username: aziz

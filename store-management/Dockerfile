@@ -4,7 +4,8 @@ FROM maven:3.9-eclipse-temurin-21 AS builder
 
 # Set the working directory inside the container
 WORKDIR /app
-
+ARG PORT = 8080 # can be changed during the image build (docker build)
+ENV PORT = 9090 # can be averidded during the runtime (container creation = docker run)
 # Copy the Maven project files (pom.xml, .mvn directory, mvnw script)
 COPY .mvn .mvn
 COPY mvnw pom.xml ./

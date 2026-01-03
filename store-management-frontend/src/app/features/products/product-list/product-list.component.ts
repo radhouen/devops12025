@@ -14,7 +14,8 @@ import { Product } from '../../../models/product.model';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-
+import { ListKeyManager } from '@angular/cdk/a11y';
+import {MatTreeModule} from '@angular/material/tree';
 @Component({
   selector: 'app-product-list',
   standalone: true,
@@ -31,100 +32,21 @@ import { MatInputModule } from '@angular/material/input';
     MatFormFieldModule,
     MatInputModule
   ],
-  template: `
-    <div class="container-custom">
-      <div class="header-section">
-        <h1>
-          <mat-icon>inventory</mat-icon>
-          Products
-        </h1>
-        @if (authService.isAuthenticated()) {
-          <button mat-raised-button color="primary" (click)="navigateToNew()">
-            <mat-icon>add</mat-icon>
-            Add Product
-          </button>
-        }
-      </div>
-
-      <mat-form-field class="search-field" appearance="outline">
-        <mat-label>Search products</mat-label>
-        <input matInput [(ngModel)]="searchTerm" (ngModelChange)="filterProducts()" placeholder="Search by name or category">
-        <mat-icon matPrefix>search</mat-icon>
-      </mat-form-field>
-
-      @if (loading) {
-        <div class="text-center mt-5">
-          <mat-spinner></mat-spinner>
-        </div>
-      }
-
-      @if (!loading && filteredProducts.length === 0) {
-        <mat-card class="empty-state">
-          <mat-card-content>
-            <mat-icon>inventory_2</mat-icon>
-            <h2>No products found</h2>
-            <p>There are no products available at the moment.</p>
-            @if (authService.isAuthenticated()) {
-              <button mat-raised-button color="primary" (click)="navigateToNew()">
-                <mat-icon>add</mat-icon>
-                Add Your First Product
-              </button>
-            }
-          </mat-card-content>
-        </mat-card>
-      }
-
-      <div class="row">
-        @for (product of filteredProducts; track product.id) {
-          <div class="col-md-4 mb-4">
-            <mat-card class="product-card">
-              @if (product.photoUrl) {
-                <img mat-card-image [src]="productService.getPhotoUrl(product.photoUrl)" [alt]="product.name" class="product-image">
-              } @else {
-                <img mat-card-image src="https://via.placeholder.com/300x200?text=No+Image" [alt]="product.name" class="product-image">
-              }
-              <mat-card-header>
-                <mat-card-title>{{ product.name }}</mat-card-title>
-                <mat-card-subtitle>
-                  <mat-chip class="category-chip">{{ product.category }}</mat-chip>
-                </mat-card-subtitle>
-              </mat-card-header>
-              <mat-card-content>
-                <p class="description">{{ product.description }}</p>
-                <div class="product-details">
-                  <div class="price">
-                    <mat-icon>attach_money</mat-icon>
-                    <span>{{ product.price | number:'1.2-2' }}</span>
-                  </div>
-                  <div class="quantity">
-                    <mat-icon>inventory_2</mat-icon>
-                    <span>{{ product.quantity }} in stock</span>
-                  </div>
-                </div>
-              </mat-card-content>
-              <mat-card-actions>
-                <button mat-button color="accent" (click)="viewProduct(product.id!)">
-                  <mat-icon>visibility</mat-icon>
-                  View Details
-                </button>
-                @if (authService.isAuthenticated()) {
-                  <button mat-button color="primary" (click)="editProduct(product.id!)">
-                    <mat-icon>edit</mat-icon>
-                    Edit
-                  </button>
-                  <button mat-button color="warn" (click)="deleteProduct(product.id!)">
-                    <mat-icon>delete</mat-icon>
-                    Delete
-                  </button>
-                }
-              </mat-card-actions>
-            </mat-card>
-          </div>
-        }
-      </div>
-    </div>
-  `,
+  templateUrl: "./product-list.component.html",
   styles: [`
+  .example-card {
+    max-width: 400px;
+  }
+  .title{
+    color: #ff0808d9;
+  }
+  .card-header {
+    border-bottom: 1px solid lightgray;
+  }
+  .example-header-image {
+    background-image: url('/assets/images/chaise.webp');
+    background-size: cover;
+  }
     .header-section {
       display: flex;
       justify-content: space-between;
@@ -143,7 +65,7 @@ import { MatInputModule } from '@angular/material/input';
       margin-bottom: 20px;
     }
     .product-card {
-      height: 100%;
+      height: auto;
       display: flex;
       flex-direction: column;
       transition: transform 0.2s, box-shadow 0.2s;
@@ -208,7 +130,10 @@ export class ProductListComponent implements OnInit {
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
   private dialog = inject(MatDialog);
-
+  public links = Array.from({ length: 10 }, (_, i) => ({
+    label: `Link ${i + 1}`,
+    url: `https://example.com/page${i + 1}`
+  }));
   products: Product[] = [];
   filteredProducts: Product[] = [];
   loading = false;
