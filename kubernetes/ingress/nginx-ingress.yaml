@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: store-deployment
+  namespace: demo
+  labels:
+    app: store
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: store
+  template:
+    metadata:
+      labels:
+        app: store
+    spec:
+      containers:
+      - name: store-container
+        image: nginx:1.29.4
+        ports:
+        - containerPort: 80 # targetPort in service must be equal too containerPort in the deployment
+---
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: store
+    name: store-service
+    namespace: demo
+  spec:
+    ports:
+    - port: 8090 # Service listen in port 8090
+      protocol: TCP
+      targetPort: 80 # service forward traffic to containerPort = targetPort = 80
+    selector:
+      app: store # value must match the  template label in the deployment section
+    type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-deployment
+  namespace: demo
+  labels:
+    app: admin
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: admin
+  template:
+    metadata:
+      labels:
+        app: admin
+    spec:
+      containers:
+      - name: admin-container
+        image: nginx:1.29.4
+        ports:
+        - containerPort: 80 # targetPort in service must be equal too containerPort in the deployment
+---
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: store
+    name: store-service
+    namespace: demo
+  spec:
+    ports:
+    - port: 8081 # Service listen in port 8090
+      protocol: TCP
+      targetPort: 80 # service forward traffic to containerPort = targetPort = 80
+    selector:
+      app: admin # value must match the  template label in the deployment section
+    type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-wildcard-host
+spec:
+  rules:
+  - host: "autopart.com"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/store"
+        backend:
+          service:
+            name: store-service # store service 
+            port:
+              number: 8090
+  - host: "autopart.com"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/admin"
+        backend:
+          service:
+            name: admin # admin service
+            port:
+              number: 8081

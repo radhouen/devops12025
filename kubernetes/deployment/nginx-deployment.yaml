@@ -19,4 +19,39 @@ spec:
       - name: nginx
         image: nginx:1.29.4
         ports:
-        - containerPort: 80
+        - containerPort: 80 # targetPort in service must be equal too containerPort in the deployment
+
+---
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: "2026-01-04T09:05:21Z"
+    labels:
+      app: nginx
+    name: nginx-deployment
+    namespace: demo
+    resourceVersion: "46271388"
+    uid: e60a6edb-5291-4b28-a49a-9b60b4df02a9
+  spec:
+    clusterIP: 10.2.249.182
+    clusterIPs:
+    - 10.2.249.182
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 8090 # Service listen in port 8090
+      protocol: TCP
+      targetPort: 80 # service forward traffic to containerPort = targetPort = 80
+    selector:
+      app: nginx # value must match the  template label in the deployment section
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+kind: List
+metadata:
+  resourceVersion: ""
